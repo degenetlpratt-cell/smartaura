@@ -1,66 +1,51 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
-import ProductCard from "../components/ProductCard";
 import { products } from "../data/product";
+import ProductCard from "../components/ProductCard";
+import SearchShort from "../components/SearchShort";
 
-const Home = () => {
-  const [offsetY, setOffsetY] = useState(0);
+export default function Home() {
+  const [search, setSearch] = useState("");
 
-  const handleScroll = () => setOffsetY(window.pageYOffset);
-
-  useEffect(() => {
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  const filtered = products.filter((p) =>
+    p.name.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
-    <div className="home">
+    <div>
       {/* Hero Section */}
       <section className="hero">
-        <img
-          src="/images/hero.jpg"
-          alt="SmartAura Hero"
-          className="hero-bg"
-          style={{ transform: `translateY(${offsetY * 0.3}px)` }}
-        />
-        <div className="hero-content">
-          <motion.h1
-            initial={{ opacity: 0, y: 60 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1 }}
-          >
-            SmartAura
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 0.3 }}
-          >
-            Futuristic tech reimagined. Experience the next generation of innovation.
-          </motion.p>
-        </div>
+        <img src="/images/hero.jpg" alt="Hero" className="hero-bg" />
+        <motion.div
+          initial={{ opacity: 0, y: 60 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1 }}
+          className="hero-content"
+        >
+          <h1>SmartAura</h1>
+          <p>Futuristic tech reimagined. Experience the next generation of innovation.</p>
+        </motion.div>
       </section>
+
+      {/* Search */}
+      <SearchShort searchTerm={search} onSearchChange={setSearch} />
 
       {/* Featured Products */}
       <section className="products">
         <motion.h2
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 1 }}
           transition={{ duration: 0.8 }}
         >
           Featured Products
         </motion.h2>
-
         <div className="product-grid">
-          {products.map((product) => (
+          {filtered.map((product, i) => (
             <motion.div
               key={product.id}
-              className="product-card-inner"
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 1 }}
-              transition={{ duration: 0.8 }}
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 1 + i * 0.2 }}
             >
               <ProductCard product={product} />
             </motion.div>
@@ -69,6 +54,4 @@ const Home = () => {
       </section>
     </div>
   );
-};
-
-export default Home;
+}
